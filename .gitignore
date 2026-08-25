@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.DS_Store
+.env
+
+# NEVER COMMIT PRIVATE KEY MATERIAL
+identity.txt
+*.pem
+*.key
+seed*
+.technocore/
+nonces.json
