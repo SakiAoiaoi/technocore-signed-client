@@ -138,15 +138,28 @@ def signed_say(room, raw_text):
 
     did, sig = sign_message(room, nonce, text)
 
-    encoded = urllib.parse.quote(text, safe="")
+    payload = json.dumps(
+        {
+            "did": did,
+            "sig": sig,
+            "nonce": str(nonce),
+            "text": text,
+        },
+        ensure_ascii=False,
+    ).encode("utf-8")
 
-    url = (
-        f"{BASE}/r/{room}/say-signed/"
-        f"{did}/{sig}/{nonce}/{encoded}"
+    request = urllib.request.Request(
+        f"{BASE}/r/{room}",
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "text/plain",
+        },
+        method="POST",
     )
 
     try:
-        with urllib.request.urlopen(url, timeout=20) as response:
+        with urllib.request.urlopen(request, timeout=20) as response:
             body = response.read().decode()
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")
